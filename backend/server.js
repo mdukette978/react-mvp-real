@@ -9,21 +9,21 @@ const { Pool } = pg;
 import dotenv from 'dotenv';
 dotenv.config();
 
-// const dbString = process.env.DATABASE_URL;
+const dbString = process.env.DATABASE_URL;
 const PORT = process.env.PORT;
 
 const client = new Pool ({
-    // connectionString: dbString
-    host: 'localhost',
-    user: 'mduke978',
-    password: process.env.PG_PASSWORD,
-    port: '5432',
-    database: 'migrainelog_db'
+    connectionString: dbString
+    // host: 'localhost',
+    // user: 'mduke978',
+    // password: process.env.PG_PASSWORD,
+    // port: '5432',
+    // database: 'migrainelog_db'
 });
 
 app.use(express.json());
 app.use(cors());
-app.use(express.static('public'));
+app.use(express.static('dist'));
 
 app.get('/entries', async (req, res) => {
     try {
