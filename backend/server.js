@@ -27,7 +27,7 @@ app.use(express.static('dist'));
 
 app.get('/entries', async (req, res) => {
     try {
-        const results = await client.query('SELECT * FROM entries');
+        const results = await client.query('SELECT * FROM entries ORDER BY entry_id DESC');
         res.status(200).json(results.rows);
     } catch (err) {
         console.error(err);

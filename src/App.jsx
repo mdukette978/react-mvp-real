@@ -1,7 +1,8 @@
-
+import Analytics from './components/Analytics';
 import EntryList from './components/EntryList';
 import EntryForm from './components/EntryForm';
-import logo from "./imgs/copy-brain-4x4.png";
+
+import logo from "./imgs/5brainresize.png";
 import { useState, useEffect } from 'react'
 import './styles.css';
 
@@ -13,50 +14,62 @@ function App() {
     try {
       const response = await fetch('http://localhost:3000/entries');
       const results = await response.json();
+
+      const entriesDateOnly = results.map(entry => {
+        // Extract the date part (YYYY-MM-DD) from the full date-time string
+        const dateWithoutTime = entry.date.split('T')[0];
+        // Return a new entry object with only the date part in the date property
+        return { ...entry, date: dateWithoutTime };
+      });
+
+      setEntries(entriesDateOnly);
       console.log(results);
-      setEntries(results);
+      // const dateWithoutTime = results.date.split('T')[0];
+      // setEntries({...results, date: dateWithoutTime});
     } catch (error) {
       console.error('Error occurred during data fetch:', error);
     }
   };
 
-  const handleOpen = () => {
-    favDialog.showModal();
-  }
-
-
   useEffect(() => {
     getData();
   }, []);
 
+
   return (
     <div>
-      <div style={{ margin: '20px' }}>
-        <button onClick={() => setFormOpen(true)}>New</button>
-      </div>
-      {/* <h1>Headache Diary</h1> */}
-      <img style={{ paddingBottom: '20px' }}src={logo} alt="Image"/>
+      <header className="sticky-header" style={{ margin: '20px'}}>
+        <button style={{fontWeight: 'bold' }} onClick={() => setFormOpen(true)}>New</button>
+      </header>
 
-      <button onClick={handleOpen}>Open Button</button>
-      <dialog id="favDialog">
-        <p>Greetings, one and all!</p>
-        <form method="dialog">
-          <button>OK</button>
-        </form>
-      </dialog >
+
+  
+      {formOpen && (
+        <EntryForm 
+        closeForm={() => setFormOpen(false)}
+        getData={getData}
+        />
+
+        )}
+
+        <div>
+      <img style={{ paddingBottom: '20px', position: 'relative' }}src={logo} alt="Image"/>
+      </div>
 
         <EntryList 
         entries={entries}
         setEntries={setEntries}
         getData={getData}
         />
-        {formOpen && (
-        <EntryForm 
-        closeForm={() => setFormOpen(false)}
-        getData={getData}
+
+        <Analytics         
+        entries={entries}
         />
-        // <EditForm />
-        )}
+
+        <footer className='footer'>
+          <p>Copyright 2023 MigraineBrain, Inc</p>
+        </footer>
+
     </div>
   )
 };
